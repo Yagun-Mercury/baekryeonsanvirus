@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>백련산 역할 분배기</title>
+</head>
+<body>
+  <h2>🎲 백련산 역할 분배기</h2>
+
+  <label>학생회 인원 수: <input type="number" id="studentCount" value="6"></label><br>
+  <label>위협 인원 수: <input type="number" id="threatCount" value="3"></label><br>
+  <label>이사회 인원 수: <input type="number" id="councilCount" value="2"></label><br><br>
+
+  <button onclick="assignRoles()">역할 분배하기</button>
+
+  <h3>🧾 분배 결과</h3>
+  <ul id="result"></ul>
+
+  <script>
+    const allRoles = [
+      { 이름: "학생회장", 세력: "학생회" },
+      { 이름: "전교 1등", 세력: "학생회" },
+      { 이름: "전교 2등", 세력: "학생회" },
+      { 이름: "양호선생님", 세력: "학생회" },
+      { 이름: "교생선생님", 세력: "학생회" },
+      { 이름: "해커", 세력: "학생회" },
+      { 이름: "보안관", 세력: "이사회" },
+      { 이름: "패션왕", 세력: "이사회" },
+      { 이름: "매점 자판기", 세력: "학생회" },
+      { 이름: "백련산 아기곰", 세력: "위협" },
+      { 이름: "불량학생", 세력: "위협" },
+      { 이름: "시백의 오른팔", 세력: "학생회" },
+      { 이름: "방송부", 세력: "학생회" },
+      { 이름: "축구부 주장", 세력: "학생회" },
+      { 이름: "전학생", 세력: "위협" },
+      { 이름: "경비아저씨", 세력: "이사회" },
+      { 이름: "체육부장", 세력: "학생회" },
+      { 이름: "미술선생님", 세력: "이사회" },
+      { 이름: "학생주임", 세력: "학생회" },
+      { 이름: "백련산 도사", 세력: "위협" }
+    ];
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function assignRoles() {
+      const studentCount = parseInt(document.getElementById("studentCount").value);
+      const threatCount = parseInt(document.getElementById("threatCount").value);
+      const councilCount = parseInt(document.getElementById("councilCount").value);
+
+      const totalCount = studentCount + threatCount + councilCount;
+
+      const shuffledRoles = [...allRoles];
+      shuffle(shuffledRoles);
+
+      const resultList = document.getElementById("result");
+      resultList.innerHTML = "";
+
+      const selectedRoles = [];
+
+      // 각 세력별 필요한 수만큼 뽑기
+      let studentPool = shuffledRoles.filter(r => r.세력 === "학생회");
+      let threatPool = shuffledRoles.filter(r => r.세력 === "위협");
+      let councilPool = shuffledRoles.filter(r => r.세력 === "이사회");
+
+      if (studentPool.length < studentCount || threatPool.length < threatCount || councilPool.length < councilCount) {
+        resultList.innerHTML = "<li>⚠️ 인원 수가 부족합니다. 각 세력별 최대 인원 확인해주세요.</li>";
+        return;
+      }
+
+      shuffle(studentPool);
+      shuffle(threatPool);
+      shuffle(councilPool);
+
+      selectedRoles.push(...studentPool.slice(0, studentCount));
+      selectedRoles.push(...threatPool.slice(0, threatCount));
+      selectedRoles.push(...councilPool.slice(0, councilCount));
+
+      shuffle(selectedRoles);
+
+      selectedRoles.forEach((role, index) => {
+        const li = document.createElement("li");
+        li.textContent = `${index + 1}번 자리 → ${role.이름} (${role.세력})`;
+        resultList.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
